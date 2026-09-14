@@ -1,0 +1,14 @@
+import { useEffect, useState } from 'react';
+import { formatPrice, getMealPlans, MealPlan, subscribe } from '../services/api';
+
+interface Message { type: 'error' | 'success'; text: string; }
+
+export default function BrowseMealPlansPage() {
+  const [plans, setPlans] = useState<MealPlan[]>([]); const [loading, setLoading] = useState(true); const [subscribing, setSubscribing] = useState<number | null>(null); const [message, setMessage] = useState<Message | null>(null);
+  useEffect(() => { getMealPlans().then((data) => setPlans(data || [])).catch((err: unknown) => setMessage({ type: 'error', text: err instanceof Error ? err.message : 'Unable to load meal plans' })).finally(() => setLoading(false)); }, []);
+  const handleSubscribe = async (plan: MealPlan) => { setMessage(null); setSubscribing(plan.id); try { await subscribe(plan.id); setMessage({ type: 'success', text: `🎉 You've subscribed to "${plan.name}"! View it in My Subscriptions.` }); } catch (err) { setMessage({ type: 'error', text: err instanceof Error ? err.message : 'Subscription failed' }); } finally { setSubscribing(null); } };
+  const activePlans = plans.filter((plan) => plan.status === 'active');
+  return <main className="page"><header className="page-header"><h1 className="page-title">Find Your Perfect <span className="gradient-text">Meal Plan</span></h1><p className="page-subtitle">Chef-crafted meals, delivered weekly. Subscribe to any plan and cancel anytime.</p></header>
+    {message && <div className={`alert alert-${message.type}`} role="alert">{message.text}</div>}{loading ? <div className="loading"><div className="spinner" /><span>Loading meal plans…</span></div> : activePlans.length === 0 ? <div className="empty-state"><div className="empty-icon">🍽️</div><h2 className="empty-title">No meal plans available</h2><p className="empty-desc">Check back soon — new plans are added regularly.</p></div> : <div className="grid-3">{activePlans.map((plan, i) => <article key={plan.id} className="meal-plan-card animate-up" style={{ animationDelay: `${i * 0.07}s` }}><div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}><span className={`badge badge-${plan.status}`}>{plan.status}</span></div><div><div className="meal-plan-price">{formatPrice(plan.price)}<span> / week</span></div><h2 className="meal-plan-name">{plan.name}</h2></div><p className="meal-plan-desc">{plan.description}</p><button id={`subscribe-btn-${plan.id}`} className="btn btn-primary btn-full" onClick={() => handleSubscribe(plan)} disabled={subscribing === plan.id}>{subscribing === plan.id ? <><span className="spinner" /> Subscribing…</> : '✦ Subscribe Now'}</button></article>)}</div>}
+  </main>;
+}
