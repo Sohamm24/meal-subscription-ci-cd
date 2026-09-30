@@ -41,10 +41,12 @@ export const formatPrice = (price: number): string => new Intl.NumberFormat('en-
 }).format(Number(price));
 
 // In local dev and the Docker test stack, VITE_API_URL is unset
-// and requests fall back to '/api' (proxied by Nginx to the backend
-// container — identical to today). In Vercel production, set:
-//   VITE_API_URL=https://meal-subscribtion-portal.onrender.com/api
-const BASE = (import.meta.env?.VITE_API_URL as string | undefined) ?? '/api';
+// and requests fall back to '/api' (proxied by Vite dev server or nginx).
+// In production (Vercel / CI build), set VITE_API_URL to the full
+// Cloudflare Worker base URL, e.g.:
+//   VITE_API_URL=https://jenkins-selenium-demo.sohamnarvankar24.workers.dev
+// Note: using || not ?? so that an empty string also falls back to '/api'.
+const BASE = (import.meta.env?.VITE_API_URL as string | undefined) || '/api';
 
 const headers = (): HeadersInit => {
   const token = localStorage.getItem('token');

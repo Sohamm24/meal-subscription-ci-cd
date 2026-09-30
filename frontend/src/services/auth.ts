@@ -9,8 +9,10 @@ export interface User {
 
 interface AuthResponse { user: User; token: string; }
 
+const BASE = (import.meta.env?.VITE_API_URL as string | undefined) || '/api';
+
 export const loginUser = async (email: string, password: string): Promise<AuthResponse> => {
-  const res = await fetch('/api/auth/login', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ email, password }) });
+  const res = await fetch(`${BASE}/auth/login`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ email, password }) });
   const data = await res.json() as AuthResponse & { error?: string };
   if (!res.ok) throw new Error(data.error || 'Login failed');
   localStorage.setItem('token', data.token);
@@ -19,7 +21,7 @@ export const loginUser = async (email: string, password: string): Promise<AuthRe
 };
 
 export const registerUser = async (name: string, email: string, password: string, role: UserRole): Promise<AuthResponse> => {
-  const res = await fetch('/api/auth/register', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ name, email, password, role }) });
+  const res = await fetch(`${BASE}/auth/register`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ name, email, password, role }) });
   const data = await res.json() as AuthResponse & { error?: string };
   if (!res.ok) throw new Error(data.error || 'Registration failed');
   localStorage.setItem('token', data.token);

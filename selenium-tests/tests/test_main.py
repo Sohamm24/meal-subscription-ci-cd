@@ -1,19 +1,4 @@
-from selenium import webdriver
-from selenium.webdriver.chrome.options import Options
-
-
-def test_home_page():
-    options = Options()
-    options.add_argument("--headless")
-    options.add_argument("--no-sandbox")
-    options.add_argument("--disable-dev-shm-usage")
-
-    driver = webdriver.Chrome(options=options)
-
-    try:
-        driver.get("http://host.docker.internal:5173")
-
-        assert "MealSub" in driver.title
-
-    finally:
-        driver.quit()
+# Smoke test for frontend landing page title
+def test_home_page_title(driver, base_url):
+    driver.get(base_url)
+    assert "MealSub" in driver.title

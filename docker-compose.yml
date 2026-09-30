@@ -1,0 +1,55 @@
+services:
+
+  # ─────────────────────────────────────────────────────────────
+  # Backend – Hono TypeScript API service
+  # ─────────────────────────────────────────────────────────────
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    ports:
+      - "8787:8787"
+    healthcheck:
+      test: ["CMD", "node", "-e", "fetch('http://127.0.0.1:8787/health').then(r => r.ok ? process.exit(0) : process.exit(1)).catch(() => process.exit(1))"]
+      interval: 3s
+      timeout: 3s
+      retries: 10
+      start_period: 5s
+
+  # ─────────────────────────────────────────────────────────────
+  # Frontend – builds the React/Vite app and serves it via nginx
+  # When VITE_API_URL is unset or empty, it falls back to /api
+  # which nginx proxies directly to the backend service.
+  # ─────────────────────────────────────────────────────────────
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+      args:
+        - VITE_API_URL=${VITE_API_URL:-}
+    ports:
+      - "80:80"
+    depends_on:
+      backend:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost/"]
+      interval: 3s
+      timeout: 3s
+      retries: 10
+      start_period: 5s
+
+  # ─────────────────────────────────────────────────────────────
+  # Selenium – runs all pytest tests against the frontend container.
+  # Exits with code 0 on pass, non-zero on failure.
+  # ─────────────────────────────────────────────────────────────
+  selenium:
+    build:
+      context: ./selenium-tests
+      dockerfile: Dockerfile
+    depends_on:
+      frontend:
+        condition: service_healthy
+    environment:
+      - BASE_URL=http://frontend:80
+    restart: "no"
