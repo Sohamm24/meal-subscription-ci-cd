@@ -55,11 +55,13 @@ pipeline {
             steps {
                 catchError(buildResult: 'SUCCESS', stageResult: 'FAILURE') {
                     withCredentials([
-                        string(credentialsId: 'CLOUDFLARE_API_TOKEN', variable: 'CLOUDFLARE_API_TOKEN')
+                        string(credentialsId: 'CLOUDFLARE_API_TOKEN',  variable: 'CLOUDFLARE_API_TOKEN'),
+                        string(credentialsId: 'CLOUDFLARE_ACCOUNT_ID', variable: 'CLOUDFLARE_ACCOUNT_ID')
                     ]) {
                         sh '''
                             docker compose run --rm \
                                 -e CLOUDFLARE_API_TOKEN="$CLOUDFLARE_API_TOKEN" \
+                                -e CLOUDFLARE_ACCOUNT_ID="$CLOUDFLARE_ACCOUNT_ID" \
                                 backend \
                                 npx wrangler deploy --minify
                         '''
