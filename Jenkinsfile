@@ -5,6 +5,7 @@ pipeline {
     environment {
         // Cloudflare Worker URL — sourced from terraform.tfstate subdomain.url
         CLOUDFLARE_WORKER_URL = 'https://jenkins-selenium-demo.sohamnarvankar24.workers.dev'
+        PATH = "/usr/local/bin:/usr/bin:/bin:${env.PATH}"
     }
 
     stages {
