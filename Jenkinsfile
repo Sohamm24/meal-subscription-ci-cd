@@ -45,25 +45,28 @@ pipeline {
 
         // ─────────────────────────────────────────────────────────
         // Deploy Backend: push the Cloudflare Worker using wrangler.
-        // Requires CLOUDFLARE_API_TOKEN Jenkins credential.
+        // Runs inside node:20-alpine container where npm/npx are available.
         // ─────────────────────────────────────────────────────────
         stage('Deploy Backend') {
             steps {
                 withCredentials([
                     string(credentialsId: 'CLOUDFLARE_API_TOKEN', variable: 'CLOUDFLARE_API_TOKEN')
                 ]) {
-                    dir('backend') {
-                        sh 'npm ci'
-                        sh 'npx wrangler deploy --minify'
-                    }
+                    sh """
+                        docker run --rm \
+                            -e CLOUDFLARE_API_TOKEN="${CLOUDFLARE_API_TOKEN}" \
+                            -v "${WORKSPACE}/backend:/app" \
+                            -w /app \
+                            node:20-alpine \
+                            sh -c "npm ci && npx wrangler deploy --minify"
+                    """
                 }
             }
         }
 
         // ─────────────────────────────────────────────────────────
         // Deploy Frontend: push the frontend to Vercel (production).
-        // Requires VERCEL_TOKEN, VERCEL_ORG_ID, VERCEL_PROJECT_ID
-        // Jenkins credentials.
+        // Runs inside node:20-alpine container where vercel CLI can execute.
         // ─────────────────────────────────────────────────────────
         stage('Deploy Frontend') {
             steps {
@@ -72,19 +75,16 @@ pipeline {
                     string(credentialsId: 'VERCEL_ORG_ID',     variable: 'VERCEL_ORG_ID'),
                     string(credentialsId: 'VERCEL_PROJECT_ID', variable: 'VERCEL_PROJECT_ID')
                 ]) {
-                    dir('frontend') {
-                        sh """
-                            npx vercel pull --yes \
-                                --environment=production \
-                                --token=${VERCEL_TOKEN}
-
-                            npx vercel build --prod \
-                                --token=${VERCEL_TOKEN}
-
-                            npx vercel deploy --prebuilt --prod \
-                                --token=${VERCEL_TOKEN}
-                        """
-                    }
+                    sh """
+                        docker run --rm \
+                            -e VERCEL_TOKEN="${VERCEL_TOKEN}" \
+                            -e VERCEL_ORG_ID="${VERCEL_ORG_ID}" \
+                            -e VERCEL_PROJECT_ID="${VERCEL_PROJECT_ID}" \
+                            -v "${WORKSPACE}/frontend:/app" \
+                            -w /app \
+                            node:20-alpine \
+                            sh -c "npx vercel pull --yes --environment=production --token=\\\$VERCEL_TOKEN && npx vercel build --prod --token=\\\$VERCEL_TOKEN && npx vercel deploy --prebuilt --prod --token=\\\$VERCEL_TOKEN"
+                    """
                 }
             }
         }
