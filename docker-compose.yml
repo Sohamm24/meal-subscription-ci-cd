@@ -39,6 +39,12 @@ services:
       retries: 10
       start_period: 5s
 
+  frontend-builder:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+      target: build
+
   # ─────────────────────────────────────────────────────────────
   # Selenium – runs all pytest tests against the frontend container.
   # Exits with code 0 on pass, non-zero on failure.
