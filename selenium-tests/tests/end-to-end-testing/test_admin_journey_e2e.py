@@ -1,47 +1,36 @@
 import time
+from selenium.webdriver.common.by import By
 from pages.login_page import LoginPage
-from pages.admin_dashboard_page import AdminDashboardPage
-from pages.admin_meal_plans_page import AdminMealPlansPage
 from pages.navbar import Navbar
 
 
-def test_complete_admin_journey(driver, base_url):
-    # End-to-end admin dashboard review, meal plan creation, verification and deletion
+def test_admin_route_redirection_and_portal_features(driver, base_url):
+    # Admin login: admin pages removed in new frontend, should log in and redirect home
     login_page = LoginPage(driver, base_url)
     login_page.open()
     login_page.login("admin@gmail.com", "admin123")
-    login_page.wait_for_url_contains("/admin/dashboard")
-
-    admin_dash = AdminDashboardPage(driver, base_url)
-    stats = admin_dash.get_stats()
-    assert "Total Customers" in stats
-    assert "Active Subscriptions" in stats
-    assert "Meal Plans" in stats
+    login_page.wait_for_url_not_contains("/login")
 
     navbar = Navbar(driver, base_url)
-    navbar.click_admin_meal_plans()
-    login_page.wait_for_url_contains("/admin/meal-plans")
+    assert navbar.is_logged_in()
 
-    timestamp = int(time.time() * 1000)
-    new_plan_name = f"E2E Chef Special {timestamp}"
-    admin_plans = AdminMealPlansPage(driver, base_url)
-    admin_plans.create_meal_plan(
-        name=new_plan_name,
-        desc="Specialty high nutrient meal plan created in E2E test",
-        price="2999",
-        meal_type="dinner",
-        status="active"
-    )
-    assert "created successfully" in admin_plans.get_success_message().lower() or new_plan_name in admin_plans.get_success_message()
+    # Accessing removed admin routes should redirect to home route '/'
+    driver.get(f"{base_url}/admin/dashboard")
+    login_page.wait_for_url_not_contains("/admin/dashboard")
+    assert "/admin/dashboard" not in driver.current_url
 
-    plans = admin_plans.get_plans_list()
-    assert any(p["name"] == new_plan_name for p in plans), f"Plan {new_plan_name} should be in table"
+    driver.get(f"{base_url}/admin/meal-plans")
+    login_page.wait_for_url_not_contains("/admin/meal-plans")
+    assert "/admin/meal-plans" not in driver.current_url
 
-    try:
-        admin_plans.delete_meal_plan(6)
-    except Exception:
-        pass
+    # Test profile customization modal in new frontend navbar
+    navbar.click_change_profile()
+    time.sleep(0.3)
+    save_btn = navbar.wait_for_clickable(By.XPATH, "//button[contains(text(), 'Save Profile Changes')]")
+    assert save_btn.is_displayed()
+    save_btn.click()
 
+    time.sleep(0.5)
     navbar.click_logout()
     login_page.wait_for_url_contains("/login")
     assert "/login" in driver.current_url

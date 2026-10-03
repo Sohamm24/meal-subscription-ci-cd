@@ -13,7 +13,7 @@ class BrowsePlansPage(BasePage):
     ERROR_ALERT = (By.CLASS_NAME, "alert-error")
 
     def open(self) -> None:
-        super().open("/")
+        super().open("/meals")
 
     def get_meal_plan_cards(self) -> List[Dict[str, str]]:
         cards = self.wait_for_elements(*self.MEAL_PLAN_CARDS)

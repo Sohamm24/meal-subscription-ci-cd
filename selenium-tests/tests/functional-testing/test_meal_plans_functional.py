@@ -1,7 +1,7 @@
-# Functional tests for meal plans catalog and admin management
+# Functional tests for meal plans catalog and filtering
 import time
+from selenium.webdriver.common.by import By
 from pages.browse_plans_page import BrowsePlansPage
-from pages.admin_meal_plans_page import AdminMealPlansPage
 
 
 def test_customer_browse_meal_plans(customer_logged_in, base_url):
@@ -23,33 +23,21 @@ def test_customer_subscribe_to_meal_plan(customer_logged_in, base_url):
     assert "subscribed" in success_msg.lower() or "🎉" in success_msg
 
 
-def test_admin_create_meal_plan(admin_logged_in, base_url):
-    admin_plans = AdminMealPlansPage(admin_logged_in, base_url)
-    admin_plans.open()
-    plan_name = f"Chef Special {int(time.time())}"
-    admin_plans.create_meal_plan(
-        name=plan_name,
-        desc="Delicious multi-cuisine chef specially curated meal.",
-        price="2200",
-        meal_type="dinner",
-        status="active"
-    )
-    success_msg = admin_plans.get_success_message()
-    assert "created successfully" in success_msg.lower() or plan_name in success_msg
-
-
-def test_admin_edit_meal_plan(admin_logged_in, base_url):
-    admin_plans = AdminMealPlansPage(admin_logged_in, base_url)
-    admin_plans.open()
+def test_meal_plans_category_filtering(customer_logged_in, base_url):
+    browse_page = BrowsePlansPage(customer_logged_in, base_url)
+    browse_page.open()
     time.sleep(0.5)
-    updated_name = f"Updated Keto {int(time.time())}"
-    admin_plans.edit_meal_plan(
-        plan_id=1,
-        name=updated_name,
-        desc="Updated keto meal description with extra avocado.",
-        price="1699",
-        meal_type="dinner",
-        status="active"
-    )
-    success_msg = admin_plans.get_success_message()
-    assert "updated" in success_msg.lower()
+
+    # Click filter pill for 'lunch' or 'dinner'
+    lunch_pill = browse_page.wait_for_clickable(By.XPATH, "//button[contains(text(), 'lunch') or contains(text(), 'Lunch')]")
+    lunch_pill.click()
+    time.sleep(0.3)
+
+    cards = browse_page.get_meal_plan_cards()
+    assert isinstance(cards, list)
+
+    # Switch back to 'All Plans'
+    all_pill = browse_page.wait_for_clickable(By.XPATH, "//button[contains(text(), 'All Plans')]")
+    all_pill.click()
+    time.sleep(0.3)
+    assert len(browse_page.get_meal_plan_cards()) > 0

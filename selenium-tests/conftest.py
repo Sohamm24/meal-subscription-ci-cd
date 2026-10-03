@@ -77,7 +77,7 @@ def customer_logged_in(driver, base_url):
     # Wait until redirect away from /login happens
     WebDriverWait(driver, 10).until(lambda d: "/login" not in d.current_url)
     navbar = Navbar(driver, base_url)
-    navbar.wait_for_visible(*Navbar.LOGOUT_BTN, timeout=10)
+    navbar.wait_for_visible(*Navbar.PROFILE_TOGGLE_BTN, timeout=10)
     logger.info(f"Customer successfully authenticated. Current URL: {driver.current_url}")
     return driver
 
@@ -88,25 +88,26 @@ def admin_logged_in(driver, base_url):
     login_page = LoginPage(driver, base_url)
     login_page.open()
     login_page.login("admin@gmail.com", "admin123")
-    login_page.wait_for_url_contains("/admin/dashboard")
+    WebDriverWait(driver, 10).until(lambda d: "/login" not in d.current_url)
     navbar = Navbar(driver, base_url)
-    navbar.wait_for_visible(*Navbar.LOGOUT_BTN, timeout=10)
+    navbar.wait_for_visible(*Navbar.PROFILE_TOGGLE_BTN, timeout=10)
     logger.info(f"Admin successfully authenticated. Current URL: {driver.current_url}")
     return driver
 
 
 def pytest_runtest_logstart(nodeid, location):
-    print(f"\n🚀 [RUNNING TEST] {nodeid}")
+    print(f"\n[RUNNING TEST] {nodeid}")
 
 
 def pytest_runtest_logreport(report):
     if report.when == "call":
         if report.passed:
-            print(f"✅ [PASSED] {report.nodeid} ({report.duration:.2f}s)")
+            print(f"[PASSED] {report.nodeid} ({report.duration:.2f}s)")
         elif report.failed:
-            print(f"❌ [FAILED] {report.nodeid} ({report.duration:.2f}s)")
+            print(f"[FAILED] {report.nodeid} ({report.duration:.2f}s)")
         elif report.skipped:
-            print(f"⚠️ [SKIPPED] {report.nodeid}")
+            print(f"[SKIPPED] {report.nodeid}")
     elif report.when == "setup" and report.failed:
-        print(f"💥 [SETUP ERROR] {report.nodeid}")
+        print(f"[SETUP ERROR] {report.nodeid}")
+
 
