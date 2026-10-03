@@ -24,23 +24,18 @@ pipeline {
         // ─────────────────────────────────────────────────────────
         stage('Build') {
             steps {
-                sh """
-                    docker compose build \
-                        --build-arg VITE_API_URL=${CLOUDFLARE_WORKER_URL}
-                """
+                sh 'docker compose build'
             }
         }
 
         // ─────────────────────────────────────────────────────────
-        // Test: spin up frontend + selenium. The selenium container
-        // runs pytest and exits. --exit-code-from selenium makes
-        // docker compose return selenium's exit code so Jenkins
-        // marks the build FAILED if any test fails.
+        // Test: spin up frontend + backend + selenium.
+        // The frontend proxies /api to the local backend container,
+        // making test execution 100% self-contained and reliable.
         // ─────────────────────────────────────────────────────────
         stage('Test') {
             steps {
                 sh """
-                    VITE_API_URL=${CLOUDFLARE_WORKER_URL} \
                     docker compose up \
                         --abort-on-container-exit \
                         --exit-code-from selenium
