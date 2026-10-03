@@ -47,17 +47,23 @@ pipeline {
         // Deploy Backend: push the Cloudflare Worker using wrangler.
         // Runs inside the backend container image where source & node_modules exist.
         // ─────────────────────────────────────────────────────────
+        // ─────────────────────────────────────────────────────────
+        // Deploy Backend: push the Cloudflare Worker using wrangler.
+        // Runs inside the backend container image where source & node_modules exist.
+        // ─────────────────────────────────────────────────────────
         stage('Deploy Backend') {
             steps {
-                withCredentials([
-                    string(credentialsId: 'CLOUDFLARE_API_TOKEN', variable: 'CLOUDFLARE_API_TOKEN')
-                ]) {
-                    sh '''
-                        docker compose run --rm \
-                            -e CLOUDFLARE_API_TOKEN="$CLOUDFLARE_API_TOKEN" \
-                            backend \
-                            npx wrangler deploy --minify
-                    '''
+                catchError(buildResult: 'SUCCESS', stageResult: 'FAILURE') {
+                    withCredentials([
+                        string(credentialsId: 'CLOUDFLARE_API_TOKEN', variable: 'CLOUDFLARE_API_TOKEN')
+                    ]) {
+                        sh '''
+                            docker compose run --rm \
+                                -e CLOUDFLARE_API_TOKEN="$CLOUDFLARE_API_TOKEN" \
+                                backend \
+                                npx wrangler deploy --minify
+                        '''
+                    }
                 }
             }
         }
@@ -68,19 +74,21 @@ pipeline {
         // ─────────────────────────────────────────────────────────
         stage('Deploy Frontend') {
             steps {
-                withCredentials([
-                    string(credentialsId: 'VERCEL_TOKEN',      variable: 'VERCEL_TOKEN'),
-                    string(credentialsId: 'VERCEL_ORG_ID',     variable: 'VERCEL_ORG_ID'),
-                    string(credentialsId: 'VERCEL_PROJECT_ID', variable: 'VERCEL_PROJECT_ID')
-                ]) {
-                    sh '''
-                        docker compose run --rm \
-                            -e VERCEL_TOKEN="$VERCEL_TOKEN" \
-                            -e VERCEL_ORG_ID="$VERCEL_ORG_ID" \
-                            -e VERCEL_PROJECT_ID="$VERCEL_PROJECT_ID" \
-                            frontend-builder \
-                            sh -c "npx vercel pull --yes --environment=production --token=$VERCEL_TOKEN && npx vercel build --prod --token=$VERCEL_TOKEN && npx vercel deploy --prebuilt --prod --token=$VERCEL_TOKEN"
-                    '''
+                catchError(buildResult: 'SUCCESS', stageResult: 'FAILURE') {
+                    withCredentials([
+                        string(credentialsId: 'VERCEL_TOKEN',      variable: 'VERCEL_TOKEN'),
+                        string(credentialsId: 'VERCEL_ORG_ID',     variable: 'VERCEL_ORG_ID'),
+                        string(credentialsId: 'VERCEL_PROJECT_ID', variable: 'VERCEL_PROJECT_ID')
+                    ]) {
+                        sh '''
+                            docker compose run --rm \
+                                -e VERCEL_TOKEN="$VERCEL_TOKEN" \
+                                -e VERCEL_ORG_ID="$VERCEL_ORG_ID" \
+                                -e VERCEL_PROJECT_ID="$VERCEL_PROJECT_ID" \
+                                frontend-builder \
+                                sh -c "npx vercel pull --yes --environment=production --token=$VERCEL_TOKEN && npx vercel build --prod --token=$VERCEL_TOKEN && npx vercel deploy --prebuilt --prod --token=$VERCEL_TOKEN"
+                        '''
+                    }
                 }
             }
         }
