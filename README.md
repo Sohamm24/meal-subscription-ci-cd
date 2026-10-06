@@ -8,7 +8,7 @@
 
 ---
 
-## 📌 Executive Summary
+## About Project
 
 **Tandurust** is a modern, full-stack meal subscription portal engineered for high performance, accessibility, and zero-downtime deployments. 
 
@@ -16,7 +16,7 @@ This repository houses the full application codebase alongside a **production-gr
 
 ---
 
-## 🏗️ System Architecture & Data Flow
+##  System Architecture & Data Flow
 
 The platform separates execution into containerized testing environments during integration, and deploys to serverless edge platforms for production.
 
@@ -30,7 +30,7 @@ The platform separates execution into containerized testing environments during 
 
 ---
 
-## 🚀 CI/CD Pipeline Overview
+##  CI/CD Pipeline Overview
 
 The pipeline guarantees that **broken code or regression bugs never reach production**. 
 
@@ -48,7 +48,7 @@ The pipeline guarantees that **broken code or regression bugs never reach produc
 
 ---
 
-## 🧪 Automated Selenium Test Suite (34/34 Passing)
+##  Automated Selenium Test Suite (34/34 Passing)
 
 The test suite covers full end-to-end user journeys, responsive viewports, functional operations, and edge-case handling.
 
@@ -124,7 +124,7 @@ docker compose up --abort-on-container-exit --exit-code-from selenium
 
 ---
 
-## ⚙️ Jenkins CI/CD Setup Guide
+##  Jenkins CI/CD Setup Guide
 
 To run this pipeline in your local Jenkins instance:
 
@@ -153,7 +153,3 @@ To run this pipeline in your local Jenkins instance:
 * **Cloudflare API Worker**: [https://jenkins-selenium-demo.sohamnarvankar24.workers.dev](https://jenkins-selenium-demo.sohamnarvankar24.workers.dev)
 
 ---
-
-## 📄 License
-
-This project is licensed under the MIT License — see the [LICENSE](LICENSE) file for details.
