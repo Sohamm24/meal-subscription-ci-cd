@@ -1,4 +1,4 @@
-# 🥗 Tandurust — Enterprise Meal Subscription Platform
+# Tandurust — Meal Subscription Platform
 ### *Automated CI/CD Pipeline & End-to-End Selenium Testing Engine*
 
 [![Build Status](https://img.shields.io/badge/Jenkins-Pipeline%20Passing-brightgreen?logo=jenkins&style=for-the-badge)](http://localhost:8080)
