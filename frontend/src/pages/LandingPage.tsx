@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { getCurrentUser } from '../services/auth';
+import thaliImg from '../assets/thali.png'
 
 const DEFAULT_PROFILE = {
   dietaryPattern: 'Vegetarian',
@@ -74,7 +75,7 @@ export default function LandingPage() {
               <div className="hero-dish-card">
                 <div className="dish-card-header">
                   <div className="dish-card-title-group">
-                    <h3 className="dish-card-title">Light Yummy Dinner Thali</h3>
+                    <h3 className="dish-card-title">Light Yummy Upwas Thali</h3>
                     <span className="dish-card-calories">Total · 540 kcal</span>
                   </div>
                   <div className="dish-card-macros-top">
@@ -98,8 +99,7 @@ export default function LandingPage() {
                   <div style={{ display: 'flex', flexDirection: 'column', gap: '0.85rem' }}>
                     <div className="dish-image-wrapper">
                       <img
-                        src="https://lh3.googleusercontent.com/aida/AEtjO1WJnve4Z1hl5J4DVcUsIE7MPWVjjif6K0Fg9A5mNmAFI88pX-M2OkGW90KEsx5jQzfw-bO3lLE4NDkp2jpWyireEbSODzhnelx3_6GHgr4QSQ5tWiJ4pkwZ1l3yJnTc7RLffAQs6j_uDuhdQAVpCtPEt63BxumcvBOTC6EEcHmAR3stZtgPVHfa69f6ioUC-6CYAX1nFFqx5OYKfqI_L5AX3eSJ-jIhnqeLUflm4ViMpcO-RgSYCBd7DUI"
-                        alt="Light Yummy Dinner Thali"
+                        src={thaliImg}
                       />
                       <div className="dish-image-badge">
                         <span
@@ -110,7 +110,7 @@ export default function LandingPage() {
                             background: '#eab308',
                           }}
                         />
-                        <span>Zero Heavy Cream</span>
+                        <span>Less Oil</span>
                       </div>
                     </div>
 
@@ -122,9 +122,6 @@ export default function LandingPage() {
                         </span>
                       </div>
                       <div style={{ display: 'flex', flexWrap: 'wrap', gap: '4px' }}>
-                        <span className="pill-chip" style={{ fontSize: '11px', padding: '2px 8px' }}>
-                          ✓ Nut-Free
-                        </span>
                         <span className="pill-chip" style={{ fontSize: '11px', padding: '2px 8px' }}>
                           ✓ Low Sodium
                         </span>
@@ -144,20 +141,20 @@ export default function LandingPage() {
                       </div>
                       <div className="dish-portion-list">
                         <div className="dish-portion-item">
-                          <span style={{ fontWeight: 600 }}>Dal Tadka &amp; Jeera Brown Rice</span>
+                          <span style={{ fontWeight: 600 }}>Aloo Jeera Sabzi</span>
                           <span style={{ color: 'var(--text-muted)' }}>260 kcal</span>
                         </div>
                         <div className="dish-portion-item">
-                          <span style={{ fontWeight: 600 }}>Methi &amp; French Bean Poriyal</span>
-                          <span style={{ color: 'var(--text-muted)' }}>90 kcal</span>
+                          <span style={{ fontWeight: 600 }}>Sabudana Khichdi</span>
+                          <span style={{ color: 'var(--text-muted)' }}>300 kcal</span>
                         </div>
                         <div className="dish-portion-item">
-                          <span style={{ fontWeight: 600 }}>Fresh Kachumber Salad</span>
-                          <span style={{ color: 'var(--secondary)', fontWeight: 700 }}>+55 kcal</span>
+                          <span style={{ fontWeight: 600 }}>Rajgira Bhakri</span>
+                          <span style={{ color: 'var(--secondary)', fontWeight: 700 }}>+155 kcal</span>
                         </div>
                         <div className="dish-portion-item">
-                          <span style={{ fontWeight: 600 }}>Cardamom Shrikhand Cup</span>
-                          <span style={{ color: 'var(--secondary)', fontWeight: 700 }}>+90 kcal</span>
+                          <span style={{ fontWeight: 600 }}>Sugar free rice kheer</span>
+                          <span style={{ color: 'var(--secondary)', fontWeight: 700 }}>+120 kcal</span>
                         </div>
                       </div>
                     </div>

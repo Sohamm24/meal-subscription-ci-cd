@@ -81,7 +81,8 @@ export default function Navbar() {
 
   return (
     <>
-      <header className="navbar" role="navigation" aria-label="Main navigation">
+      <div className="navbar-sticky-wrapper">
+        <header className="navbar" role="navigation" aria-label="Main navigation">
         {/* Brand Logo on the Left */}
         <Link to="/" className="navbar-logo">
           <img src={logoImg} alt="Tandurust" className="navbar-logo-img" />
@@ -187,6 +188,50 @@ export default function Navbar() {
           )}
         </div>
       </header>
+
+        {/* Yellow rounded pattern curtain design running left to right */}
+        <div className="navbar-curtain-banner" aria-hidden="true">
+          <svg
+            className="navbar-curtain-svg"
+            preserveAspectRatio="none"
+            viewBox="0 0 1200 24"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <defs>
+              <linearGradient id="yellowCurtainGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+                <stop offset="0%" stopColor="#FACC15" />
+                <stop offset="25%" stopColor="#EAB308" />
+                <stop offset="50%" stopColor="#F59E0B" />
+                <stop offset="75%" stopColor="#EAB308" />
+                <stop offset="100%" stopColor="#FACC15" />
+              </linearGradient>
+              <pattern
+                id="yellowCurtainPattern"
+                width="48"
+                height="24"
+                patternUnits="userSpaceOnUse"
+              >
+                {/* Top connecting bar */}
+                <path d="M 0 0 H 48 V 4 H 0 Z" fill="#EAB308" />
+                {/* Main rounded yellow curtain scallop arch */}
+                <path
+                  d="M 0 4 Q 24 26 48 4 L 48 0 L 0 0 Z"
+                  fill="url(#yellowCurtainGrad)"
+                />
+                {/* Inner lighter yellow highlight arch */}
+                <path
+                  d="M 6 4 Q 24 20 42 4 Z"
+                  fill="#FEF08A"
+                  opacity="0.85"
+                />
+                {/* Center hanging decorative amber bead/dot */}
+                <circle cx="24" cy="22" r="2.2" fill="#854D0E" />
+              </pattern>
+            </defs>
+            <rect width="100%" height="24" fill="url(#yellowCurtainPattern)" />
+          </svg>
+        </div>
+      </div>
 
       {/* ── CHANGE PROFILE MODAL ── */}
       {profileModalOpen && (
